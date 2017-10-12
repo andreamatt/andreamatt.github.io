@@ -65,6 +65,16 @@ function Matrix(row, col){
 		}
 		this.mat[row][col] = value;
 	}
+
+	this.clone = function(){
+		result = new Matrix(this.rows, this.columns);
+		for(r=0; r<this.rows; r++){
+			for(c=0; c<this.columns; c++){
+				result.set(r, c, this.mat[r][c]);
+			}
+		}
+		return result;
+	}
 }
 
 function GetOutput(Mat, inputs){
