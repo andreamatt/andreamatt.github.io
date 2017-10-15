@@ -2,26 +2,26 @@ function Matrix(row, col){
 	this.mat = [];
 	this.columns = col;
 	this.rows = row;
-	for(i=0; i<row; i++){
+	for(let i=0; i<row; i++){
 		this.mat[i] = [];
-		for(j=0; j<col; j++){
+		for(let j=0; j<col; j++){
 			this.mat[i][j] = 0;
 		}
 	}
 
 	this.randomize = function(max = maxNeuValue){
-		for(i=0; i<this.row; i++){
+		for(let i=0; i<this.rows; i++){
 			this.mat[i] = [];
-			for(j=0; j<this.col; j++){
+			for(let j=0; j<this.columns; j++){
 				this.mat[i][j] = randomFloat(-max, max);
 			}
 		}
-	}
+	};
 
-	this.mutate = function(m_p = mutation_prob, rm_p = randommut_prob, m_c = mutation_coeff, maxV = maxNeuValue){
-		for(i=0; i<this.row; i++){
+	this.mutate = function(m_p = mutation_prob, rm_p = randomMutation_prob, m_c = mutation_coeff, maxV = maxNeuValue){
+		for(let i=0; i<this.rows; i++){
 			this.mat[i] = [];
-			for(j=0; j<this.col; j++){
+			for(let j=0; j<this.columns; j++){
 				if(randomProb(rm_p)){
 					this.mat[i][j] = randomFloat(-maxV, maxV);
 				}
@@ -30,12 +30,12 @@ function Matrix(row, col){
 				}
 			}
 		}
-	}
+	};
 
 	this.toString = function(){
-		s = "";
-		for(c=0; c<this.columns; c++){
-			for(r=0; r<this.rows; r++){
+		let s = "";
+		for(let c=0; c<this.columns; c++){
+			for(let r=0; r<this.rows; r++){
 				if(this.mat[r][c] > 0){
 					s += " ";
 				}
@@ -64,33 +64,18 @@ function Matrix(row, col){
 			console.log("Row out of bound");
 		}
 		this.mat[row][col] = value;
-	}
+	};
 
 	this.clone = function(){
-		result = new Matrix(this.rows, this.columns);
-		for(r=0; r<this.rows; r++){
-			for(c=0; c<this.columns; c++){
+		let result = new Matrix(this.rows, this.columns);
+		for(let r=0; r<this.rows; r++){
+			for(let c=0; c<this.columns; c++){
 				result.set(r, c, this.mat[r][c]);
 			}
 		}
 		return result;
-	}
+	};
+
 }
 
-function GetOutput(Mat, inputs){
-	if(Mat.rows !== inputs.length){
-		console.log("Doesnt seem good...");
-	}
-	result = [];
-	for(i=0; i<Mat.columns; i++){
-		result[i] = 0;
-	}
-
-	for(r=0; r<Mat.rows; r++){
-		for(c=0; c<Mat.columns; c++){
-			result[c] += inputs[r]*Mat.get(r, c);
-		}
-	}
-	return result;
-}
 
