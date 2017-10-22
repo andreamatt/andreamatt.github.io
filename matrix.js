@@ -1,14 +1,7 @@
-function Matrix(row, col){
+function Matrix(row, col, random = false){
 	this.mat = [];
 	this.columns = col;
 	this.rows = row;
-	for(let i=0; i<row; i++){
-		this.mat[i] = [];
-		for(let j=0; j<col; j++){
-			this.mat[i][j] = 0;
-		}
-	}
-
 	this.randomize = function(max = maxNeuValue){
 		for(let i=0; i<this.rows; i++){
 			this.mat[i] = [];
@@ -18,14 +11,25 @@ function Matrix(row, col){
 		}
 	};
 
-	this.mutate = function(m_p = mutation_prob, rm_p = randomMutation_prob, m_c = mutation_coeff, maxV = maxNeuValue){
+	for(let i=0; i<row; i++){
+		this.mat[i] = [];
+		for(let j=0; j<col; j++){
+			this.mat[i][j] = 0;
+		}
+	}
+	if(random){
+		this.randomize();
+	}
+
+	this.mutate = function(m_p = mutation_prob, rm_p = randomMutation_prob, m_c = mutation_factor, maxV = maxNeuValue){
 		for(let i=0; i<this.rows; i++){
-			this.mat[i] = [];
 			for(let j=0; j<this.columns; j++){
 				if(randomProb(rm_p)){
 					this.mat[i][j] = randomFloat(-maxV, maxV);
+					//console.log("Random");
 				}
 				else if(randomProb(m_p)){
+					//console.log("Mut");
 					this.mat[i][j] += this.mat[i][j] * m_c * randomSign();
 				}
 			}
@@ -74,6 +78,14 @@ function Matrix(row, col){
 			}
 		}
 		return result;
+	};
+
+	this.setToZeros = function(){
+		for(let r=0; r<this.rows; r++){
+			for(let c=0; c<this.columns; c++){
+				this.mat[r][c] = 0;
+			}
+		}
 	};
 
 }

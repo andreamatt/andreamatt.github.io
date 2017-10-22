@@ -1,36 +1,42 @@
-function Generation(amount = amountOfCreatures, layers_dim = layersDim){
+function Generation(amount, layers_dim = layersDim){
 	this.creatures = [];
 	this.amount = amount;
 	this.layers_dim = layers_dim.slice();
 	for(let i=0; i<amount; i++){
-		this.creatures[i] = new Brain(layers_dim, false);
+		this.creatures[i] = new Creature(layers_dim);
 	}
 
 	this.evolve = function(){
 		// sort
 		this.creatures.sort(function(a, b){
-			return a.score - b.score;
+			return b.score - a.score;
 		});
 
-		// method 1: new half is child of best half
-		if(! newChildsEveryGen){
-			for(let i=0; i<this.amount/2; i++){
-				this.creatures[i+this.amount/2] = this.creatures[i].getChild();
-				this.creatures[i].mutate();
-			}
-		}
-
-		// method 2: a quarter is new, other quarter is child
-		else{
-			// childs
+		// method 1: a quarter is new, other quarter is child
+		if(newChildrenEveryGen){
+			// children
 			for(let i=0; i<this.amount/4; i++){
 				this.creatures[i + this.amount/2] = this.creatures[i].getChild();
+				this.creatures[i + this.amount/2].mutate();
 			}
 
 			// new ones
 			for(let i=this.amount*3/4; i<this.amount; i++){
 				this.creatures[i] = new Creature(this.layers_dim);
 			}
+		}
+
+		// method 2: new half is child of best half
+		else{
+			for(let i=0; i<this.amount/2; i++){
+				this.creatures[i+this.amount/2] = this.creatures[i].getChild();
+				this.creatures[i].mutate();
+			}
+		}
+
+		// ANYWAY, scores to 0
+		for(let i=0; i<this.amount; i++){
+			this.creatures[i].score = 0;
 		}
 
 	};
@@ -71,15 +77,8 @@ function Brain(layers_dim, isChild = false){
         }
     }
     else{
-
         for(let i=0; i<layers_dim.length-1; i++){
-            this.layers[i] = new Matrix(layers_dim[i], layers_dim[i+1]);
-            for(let j=0; j<layers_dim[i]; j++){
-                for(let k=0; k<layers_dim[i+1]; k++){
-                    console.log(this.layers[i].toString());
-                }
-                console.log("_");
-            }
+            this.layers[i] = new Matrix(layers_dim[i], layers_dim[i+1], true);
         }
     }
 
@@ -97,11 +96,10 @@ function Brain(layers_dim, isChild = false){
 
 	this.getChild = function(){
 		let result = new Brain(this.layers_dim, true);
-
         for(let i=0; i<this.layers.length; i++) {
             result.layers[i] = this.layers[i].clone();
-            result.layers[i].mutate(rm_p = 0.5);
         }
+		return result;
 	};
 
 	this.calculate = function(input){
@@ -115,19 +113,29 @@ function Brain(layers_dim, isChild = false){
 
 function getOutput(Mat, inputs){
 	if(Mat.rows !== inputs.length){
-		console.log("Doesn't seem good...");
+		console.log(Mat.rows + " != " + inputs.length);
+		return;
 	}
 	let result = [];
 	for(let i=0; i<Mat.columns; i++){
 		result[i] = 0;
 	}
 
+	//console.log(Mat.toString());
+
 	for(let r=0; r<Mat.rows; r++){
 		for(let c=0; c<Mat.columns; c++){
 			result[c] += inputs[r]*Mat.get(r, c);
 		}
 	}
+
+	for(let i=0; i<Mat.columns; i++){
+		result[i] = sigmoid(result[i]);
+	}
+
 	return result;
 }
 
-
+function sigmoid(t) {
+	return 1/(1+Math.pow(Math.E, -t));
+}

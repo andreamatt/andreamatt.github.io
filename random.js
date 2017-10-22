@@ -7,7 +7,7 @@ function randomProb(prob){
 }
 
 function randomFloat(min, max){
-	return (Math.random() * (max-min)) - min;
+	return (Math.random() * (max-min)) + min;
 }
 
 function randomSign(){
@@ -15,4 +15,12 @@ function randomSign(){
 		return 1;
 	}
 	return -1;
+}
+
+function randomInt(min, max, includeMax = false){
+	if(includeMax){
+		return Math.floor(Math.random()*(max-min+1)+min);	}
+	else{
+		return Math.floor(Math.random()*(max-min)+min);
+	}
 }
