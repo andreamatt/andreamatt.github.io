@@ -6,8 +6,7 @@ let obstacleID = 3;
 let currentX = Math.floor(cols/2);
 let currentCreature = 0;
 let genID = 0;
-let creatureAmount = 200;
-let gen = new Generation(creatureAmount);
+let gen = new Generation(amountOfCreatures);
 let obstacles = getObstacles(cols);
 let lefts = 0;
 let rights = 0;
@@ -18,19 +17,19 @@ let totalScore = 0;
 
 window.onload = function(){
 
-	drawGenInfo(totalScore/creatureAmount, genID, creatureAmount);
-	//updateChart(genID, totalScore/creatureAmount);
+	drawGenInfo(totalScore/amountOfCreatures, genID, amountOfCreatures);
+	//updateChart(genID, totalScore/amountOfCreatures);
 	drawCreatureID(currentCreature);
 	timer = setInterval(loop, timeInterval);
 };
 
 function loop(){
 	// new gen if necessary
-	if(currentCreature === creatureAmount -1){
-		drawGenInfo(totalScore/creatureAmount, genID, creatureAmount);
+	if(currentCreature === amountOfCreatures -1){
+		drawGenInfo(totalScore/amountOfCreatures, genID, amountOfCreatures);
 		//console.log("\n\nNew Gen");
 		gen.evolve();
-		//console.log("Average: " + totalScore/creatureAmount + ", L: " + lefts + ", C: " + centers + ", R: " + rights);
+		//console.log("Average: " + totalScore/amountOfCreatures + ", L: " + lefts + ", C: " + centers + ", R: " + rights);
 		lefts = rights = centers = 0;
 		totalScore = 0;
 		genID++;

@@ -1,35 +1,28 @@
-
-google.charts.load('current', {packages: ['corechart', 'line']});
-google.charts.setOnLoadCallback(drawChart);
-
-var globalData;
-
-function drawChart() {
-
-	globalData = new google.visualization.DataTable();
-	
-	globalData.addColumn('number', 'X');
-	globalData.addColumn('number', 'Avg Score');
-
-	globalData.addRows([
-		[0, 0]
-	]);
-
-	var options = {
-		hAxis: {
-			title: 'Generation'
+var ctx = document.getElementById("chart_canvas");
+var myChart = new Chart(ctx, {
+	type: 'line',
+	data: {
+		datasets: [{
+			label: 'Learning curve'
+		}]
+	},
+	options: {
+		responsive: false,
+		scales: {
+			xAxes: [{
+				type: 'linear',
+				position: 'bottom',
+			}]
 		},
-		vAxis: {
-			title: 'Average Score'
+		elements: {
+			line: {
+				tension: 0, // disables bezier curves
+			}
 		}
-	};
+	}
+});
 
-	var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-	chart.draw(globalData, options);
-}
-
-function updateChart(genID, avgScore){
-	//globalData.addRows([
-		//[genID, avgScore]
-	//]);
+function addData(x, y){
+	myChart.data.datasets[0].data.push({x: x, y: y});
+	myChart.update();
 }
