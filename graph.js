@@ -1,9 +1,9 @@
-var ctx = document.getElementById("chart_canvas");
-var myChart = new Chart(ctx, {
+let ctx = document.getElementById("chart_canvas");
+let myChart = new Chart(ctx, {
 	type: 'line',
 	data: {
 		datasets: [{
-			label: 'Learning curve'
+			label: 'Average Score'
 		}]
 	},
 	options: {
@@ -16,7 +16,7 @@ var myChart = new Chart(ctx, {
 		},
 		elements: {
 			line: {
-				tension: 0, // disables bezier curves
+				tension: 0.4, // disables bezier curves
 			}
 		}
 	}

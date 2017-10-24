@@ -12,99 +12,115 @@ let lefts = 0;
 let rights = 0;
 let centers = 0;
 let timer;
-let timeInterval = 3;
+let timeInterval = 1;
 let totalScore = 0;
+let maxScore = rows*obstacles.length*cols*5;
+let calculating = false;
+let speedSlider = document.getElementById("speedRange");
+let nOfMax = 0;
+
+speedSlider.oninput = function(){
+	timeInterval = speedSlider.max - speedSlider.value;
+	if(timer !== null){
+		clearInterval(timer);
+		timer = setInterval(loop, timeInterval);
+	}};
 
 window.onload = function(){
 
-	drawGenInfo(totalScore/amountOfCreatures, genID, amountOfCreatures);
+	drawGenInfo(totalScore/amountOfCreatures, genID, amountOfCreatures, nOfMax);
 	//updateChart(genID, totalScore/amountOfCreatures);
 	drawCreatureID(currentCreature);
 	timer = setInterval(loop, timeInterval);
 };
 
 function loop(){
-	// new gen if necessary
-	if(currentCreature === amountOfCreatures -1){
-		drawGenInfo(totalScore/amountOfCreatures, genID, amountOfCreatures);
-		//console.log("\n\nNew Gen");
-		gen.evolve();
-		//console.log("Average: " + totalScore/amountOfCreatures + ", L: " + lefts + ", C: " + centers + ", R: " + rights);
-		lefts = rights = centers = 0;
-		totalScore = 0;
-		genID++;
-		currentY = 0;
-		currentX = 0;
-		currentCreature = 0;
-	}
+	if(!calculating){
+		calculating = true;
+		// new gen if necessary
+		if (currentCreature === amountOfCreatures - 1) {
+			drawGenInfo(totalScore / amountOfCreatures, genID, amountOfCreatures, nOfMax);
+			//console.log("\n\nNew Gen");
+			gen.evolve();
+			//console.log("Average: " + totalScore/amountOfCreatures + ", L: " + lefts + ", C: " + centers + ", R: " + rights);
+			lefts = rights = centers = 0;
+			totalScore = 0;
+			genID++;
+			currentY = 0;
+			currentX = 0;
+			currentCreature = 0;
+			nOfMax = 0;
+		}
 
 
-	let input = obstacles[obstacleID].slice();
-	let centeredX = currentX - (cols-1)/2;
-	input.push(centeredX);
-	//console.log(input);
-	//console.log("Creatures: " + gen.creatures);
-	//console.log("Creatures: " + gen.creatures);
-	//console.log("CurrentC: " + gen.creatures[currentCreature]);
-	//console.log("Calc: " + gen.creatures[currentCreature].calculate);
-	//console.log("Input: " + input + ", Output: " + gen.creatures[currentCreature].calculate(input));
-	let output = gen.creatures[currentCreature].calculate(input);
-	if(output.length === 1) {
-		if (output < 0.3) {
-			currentX--;
-			lefts++;
-		}
-		else if (output > 0.7) {
-			currentX++;
-			rights++;
-		}
-		else {
-			//dk
-			centers++;
-		}
-	}
-
-	else {
-		let max_id = maxID(output);
-		switch (max_id) {
-			case 0:
+		let input = obstacles[obstacleID].slice();
+		let centeredX = currentX - (cols - 1) / 2;
+		input.push(centeredX);
+		//console.log(input);
+		//console.log("Creatures: " + gen.creatures);
+		//console.log("Creatures: " + gen.creatures);
+		//console.log("CurrentC: " + gen.creatures[currentCreature]);
+		//console.log("Calc: " + gen.creatures[currentCreature].calculate);
+		//console.log("Input: " + input + ", Output: " + gen.creatures[currentCreature].calculate(input));
+		let output = gen.creatures[currentCreature].calculate(input);
+		if (output.length === 1) {
+			if (output < 0.3) {
 				currentX--;
 				lefts++;
-				break;
-			case 1:
-				// stay there;
-				centers++;
-				break;
-			case 2:
+			}
+			else if (output > 0.7) {
 				currentX++;
 				rights++;
-				break;
+			}
+			else {
+				//dk
+				centers++;
+			}
 		}
-	}
-	if(currentX === cols){
-		currentX--;
-	}
-	else if(currentX === -1){
-		currentX++;
-	}
 
-	if(gonnaLose()){
-		drawGrid(obstacles[obstacleID], currentY, rows, cols, currentX);
-		currentY = 0;
-		totalScore += gen.creatures[currentCreature].score;
-		currentCreature++;
-		currentX = Math.floor(cols/2);
-		drawCreatureID(currentCreature);
-	}
-	else{
-		gen.creatures[currentCreature].increaseScore();
-		drawGrid(obstacles[obstacleID], currentY, rows, cols, currentX);
-		currentY++;
-		drawScore(gen.creatures[currentCreature].score);
-		if(currentY === rows){
-			currentY = 0;
-			obstacleID = randomInt(0, obstacles.length);
+		else {
+			let max_id = maxID(output);
+			switch (max_id) {
+				case 0:
+					currentX--;
+					lefts++;
+					break;
+				case 1:
+					// stay there;
+					centers++;
+					break;
+				case 2:
+					currentX++;
+					rights++;
+					break;
+			}
 		}
+		if (currentX === cols) {
+			currentX--;
+		}
+		else if (currentX === -1) {
+			currentX++;
+		}
+
+		if (gonnaLose()) {
+			drawGrid(obstacles[obstacleID], currentY, rows, cols, currentX);
+			currentY = 0;
+			totalScore += gen.creatures[currentCreature].score;
+			currentCreature++;
+			currentX = Math.floor(cols / 2);
+			drawCreatureID(currentCreature);
+		}
+		else {
+			gen.creatures[currentCreature].increaseScore();
+			drawGrid(obstacles[obstacleID], currentY, rows, cols, currentX);
+			currentY++;
+			drawScore(gen.creatures[currentCreature].score);
+			if (currentY === rows) {
+				currentY = 0;
+				obstacleID = randomInt(0, obstacles.length);
+			}
+		}
+		calculating = false;
 	}
 
 }
@@ -124,11 +140,12 @@ window.onkeydown = function(event){
 };
 
 function gonnaLose() {
-	if (currentY !== rows - 2) {
-		return false;
-	}
-	else if(gen.creatures[currentCreature].score > 200) {
+	if(gen.creatures[currentCreature].score > maxScore) {
+		nOfMax++;
 		return true;
+	}
+	else if (currentY !== rows - 2) {
+		return false;
 	}
 	else{
 		return obstacles[obstacleID][currentX] === 1;

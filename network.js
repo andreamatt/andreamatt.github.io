@@ -29,8 +29,8 @@ function Generation(amount, layers_dim = layersDim){
 		// method 2: new half is child of best half
 		else{
 			for(let i=0; i<this.amount/2; i++){
-				this.creatures[i+this.amount/2] = this.creatures[i].getChild();
-				this.creatures[i].mutate();
+				this.creatures[i+this.amount/2] = this.creatures[Math.floor(i/4)].getChild();
+				this.creatures[i+this.amount/2].mutate();
 			}
 		}
 

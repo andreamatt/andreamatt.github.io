@@ -30,8 +30,9 @@ function drawCreatureID(id){
 	document.getElementById("creature").innerHTML = "Creature: " + id;
 }
 
-function drawGenInfo(averageScore, genID, amountOfCreatures){
-	document.getElementById("genInfo").innerHTML = amountOfCreatures + " creatures. Gen: " + genID + ", avg score: " + averageScore;
+function drawGenInfo(averageScore, genID, amountOfCreatures, nOfMax){
+	document.getElementById("genInfo").innerHTML = amountOfCreatures + " creatures Gen: " + genID + " <br>" +
+		"Avg score: " + averageScore + " Max reached: " + nOfMax;
 	addData(genID, averageScore);
 }
 
